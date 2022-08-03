@@ -1,4 +1,6 @@
+from audioop import reverse
 import datetime
+from urllib import response
 from django.test import TestCase
 from django.utils import timezone
 from premiosapp.polls.models import Question
@@ -9,3 +11,9 @@ class QuestionModelTests(TestCase):
         future_question = Question(question_text = "¿Quien es el mejor Course director de Platzi?", pub_date =time)
         self.assertIs(future_question.was_published_recently(), False)
 
+class QuestionIndexTest(TestCase):
+    def test_no_questions(self):
+        response = self.client.get(reverse("polls:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No polls are avaible.")
+        self.assertQuerysetEqual(response.context["latest_question_list"], [])
